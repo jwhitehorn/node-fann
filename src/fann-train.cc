@@ -68,42 +68,42 @@ void NNet::TrainOnData(struct fann_train_data *traindata, unsigned int max_epoch
 
 NAN_METHOD(NNet::Train)
 {
-  NanScope();
-  NNet *net = ObjectWrap::Unwrap<NNet>(args.This());
+  Nan::HandleScope scope;
+  NNet *net = Nan::ObjectWrap::Unwrap<NNet>(info.This());
   struct fann_train_data *traindata = NULL;
 
-  if (args.Length() < 1)
-    return NanThrowError("No arguments supplied");
+  if (info.Length() < 1)
+    return Nan::ThrowError("No arguments supplied");
 
-  if (!args[0]->IsArray())
-    return NanThrowError("First argument should be 2d-array (training data set)");
+  if (!info[0]->IsArray())
+    return Nan::ThrowError("First argument should be 2d-array (training data set)");
 
-  Local<Array> dataset = args[0].As<Array>();
+  Local<Array> dataset = info[0].As<Array>();
 
   const char* error = net->MakeTrainData(dataset, &traindata);
   if (error != NULL)
-    return NanThrowError(error);
+    return Nan::ThrowError(error);
 
   if (traindata == NULL)
-    return NanThrowError("Internal error");
+    return Nan::ThrowError("Internal error");
 
   unsigned int max_epochs = 100000;
   unsigned int epochs_between_reports = 1000;
   float desired_error = 0.001;
   int scale = 0;
-  if (args.Length() >= 2) {
-    Local<Object> params = args[1].As<Object>();
-    if (params->Has(NanNew<String>("epochs"))) {
-      max_epochs = params->Get(NanNew<String>("epochs"))->IntegerValue();
+  if (info.Length() >= 2) {
+    Local<Object> params = info[1].As<Object>();
+    if (params->Has(Nan::New<String>("epochs").ToLocalChecked())) {
+      max_epochs = params->Get(Nan::New<String>("epochs").ToLocalChecked())->IntegerValue();
     }
-    if (params->Has(NanNew<String>("epochs_between_reports"))) {
-      epochs_between_reports = params->Get(NanNew<String>("epochs_between_reports"))->IntegerValue();
+    if (params->Has(Nan::New<String>("epochs_between_reports").ToLocalChecked())) {
+      epochs_between_reports = params->Get(Nan::New<String>("epochs_between_reports").ToLocalChecked())->IntegerValue();
     }
-    if (params->Has(NanNew<String>("error"))) {
-      desired_error = params->Get(NanNew<String>("error"))->NumberValue();
+    if (params->Has(Nan::New<String>("error").ToLocalChecked())) {
+      desired_error = params->Get(Nan::New<String>("error").ToLocalChecked())->NumberValue();
     }
-    if (params->Has(NanNew<String>("scale"))) {
-      scale = params->Get(NanNew<String>("scale"))->BooleanValue();
+    if (params->Has(Nan::New<String>("scale").ToLocalChecked())) {
+      scale = params->Get(Nan::New<String>("scale").ToLocalChecked())->BooleanValue();
     }
   }
   if (scale) {
@@ -112,23 +112,23 @@ NAN_METHOD(NNet::Train)
   }
   net->TrainOnData(traindata, max_epochs, epochs_between_reports, desired_error);
   fann_destroy_train(traindata);
-  NanReturnUndefined();
+  return;
 }
 
 NAN_METHOD(NNet::TrainOnce)
 {
-  NanScope();
-  NNet *net = ObjectWrap::Unwrap<NNet>(args.This());
-  if (args.Length() < 2)
-    return NanThrowError("2 arguments needed");
+  Nan::HandleScope scope;
+  NNet *net = Nan::ObjectWrap::Unwrap<NNet>(info.This());
+  if (info.Length() < 2)
+    return Nan::ThrowError("2 arguments needed");
 
-  if (!args[0]->IsArray())
-    return NanThrowError("First argument should be array (training input)");
-  if (!args[1]->IsArray())
-    return NanThrowError("Second argument should be array (training output)");
+  if (!info[0]->IsArray())
+    return Nan::ThrowError("First argument should be array (training input)");
+  if (!info[1]->IsArray())
+    return Nan::ThrowError("Second argument should be array (training output)");
 
-  Local<Array> datain = args[0].As<Array>();
-  Local<Array> dataout = args[1].As<Array>();
+  Local<Array> datain = info[0].As<Array>();
+  Local<Array> dataout = info[1].As<Array>();
   fann_type *dataset_in = new fann_type[datain->Length()];
   fann_type *dataset_out = new fann_type[dataout->Length()];
   for (unsigned i=0; i<datain->Length(); i++) {
@@ -142,6 +142,6 @@ NAN_METHOD(NNet::TrainOnce)
 
   delete[] dataset_in;
   delete[] dataset_out;
-  NanReturnUndefined();
+  return;
 }
 

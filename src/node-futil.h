@@ -25,4 +25,3 @@ NAN_METHOD(GetActivationFunctionList);
 NAN_METHOD(GetErrorFuncList);
 NAN_METHOD(GetStopFuncList);
 NAN_METHOD(GetNetworkTypeList);
-
