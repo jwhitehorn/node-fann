@@ -27,7 +27,7 @@ Handle<Value> NormalizeName(const char* origname, const char* prefix, int prefix
 //  strncpy(algname, origname, 63);
   strncpy_lower(algname, origname, 64);
   algname[63] = 0;
-  return NanNew<String>(algname);
+  return Nan::New<String>(algname).ToLocalChecked();
 }
 
 int _SeekCharArray(Local<String> _value, const char* const* array, int size, const char* prefix)

@@ -1,25 +1,65 @@
 {
-  "name"            : "fann",
-  "version"         : "1.0.0",
-  "description"     : "FANN (Fast Artificial Neural Network Library) bindings for Node.js",
-
-  "author"          : { "name"  : "Alex Kocharin"
-                      , "email" : "alex@kocharin.ru" },
-
-  "repository"      : { "type"  : "git"
-                      , "url"   : "git://github.com/rlidwka/node-fann.git" },
-
-  "keywords"        : [ "fann", "neural", "network", "artificial", "intelligence"
-                      , "neural network", "artificial intelligence", "machine learning" ],
-
-  "license"         : { "type"  : "WTFPL"
-                      , "url"   : "http://www.wtfpl.net/txt/copying/" },
-
-  "dependencies"    : { "nan"   : "~1.8" },
-
-  "devDependencies" : { "mocha" : "2" },
-
-  "scripts"         : { "test"  : "mocha ./test -R dot" },
-
-  "gypfile"         : true
+  "name": "fann",
+  "version": "1.0.0",
+  "description": "FANN (Fast Artificial Neural Network Library) bindings for Node.js",
+  "author": {
+    "name": "Alex Kocharin",
+    "email": "alex@kocharin.ru"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rlidwka/node-fann.git"
+  },
+  "keywords": [
+    "fann",
+    "neural",
+    "network",
+    "artificial",
+    "intelligence",
+    "neural network",
+    "artificial intelligence",
+    "machine learning"
+  ],
+  "license": {
+    "type": "WTFPL",
+    "url": "http://www.wtfpl.net/txt/copying/"
+  },
+  "dependencies": {
+    "nan": "~2.1"
+  },
+  "devDependencies": {
+    "mocha": "2"
+  },
+  "scripts": {
+    "test": "mocha ./test -R dot",
+    "install": "node-gyp rebuild"
+  },
+  "gypfile": true,
+  "gitHead": "a1cb0fbf28317353536517f31490ab939ced46e0",
+  "bugs": {
+    "url": "https://github.com/rlidwka/node-fann/issues"
+  },
+  "homepage": "https://github.com/rlidwka/node-fann",
+  "_id": "fann@1.0.0",
+  "_shasum": "db8b9e17be443549378085779c8c80b0754fe1ac",
+  "_from": "fann@latest",
+  "_npmVersion": "2.0.1",
+  "_nodeVersion": "0.10.25",
+  "_npmUser": {
+    "name": "rlidwka",
+    "email": "alex@kocharin.ru"
+  },
+  "maintainers": [
+    {
+      "name": "rlidwka",
+      "email": "alex@kocharin.ru"
+    }
+  ],
+  "dist": {
+    "shasum": "db8b9e17be443549378085779c8c80b0754fe1ac",
+    "tarball": "http://registry.npmjs.org/fann/-/fann-1.0.0.tgz"
+  },
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/fann/-/fann-1.0.0.tgz",
+  "readme": "ERROR: No README data found!"
 }

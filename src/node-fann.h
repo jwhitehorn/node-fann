@@ -4,7 +4,7 @@
 
 #include "node-futil.h"
 
-class NNet : public ObjectWrap
+class NNet : public Nan::ObjectWrap
 {
   public:
     int something;

@@ -11,40 +11,40 @@ void NNet::CascadeTrainOnData(struct fann_train_data *traindata, unsigned int ma
 
 NAN_METHOD(NNet::CascadeTrain)
 {
-  NanScope();
-  NNet *net = ObjectWrap::Unwrap<NNet>(args.This());
+  Nan::HandleScope scope;
+  NNet *net = Nan::ObjectWrap::Unwrap<NNet>(info.This());
   struct fann_train_data *traindata = NULL;
 
-  if (args.Length() < 1)
-    return NanThrowError("No arguments supplied");
+  if (info.Length() < 1)
+    return Nan::ThrowError("No arguments supplied");
 
-  if (!args[0]->IsArray())
-    return NanThrowError("First argument should be 2d-array (training data set)");
+  if (!info[0]->IsArray())
+    return Nan::ThrowError("First argument should be 2d-array (training data set)");
 
-  Local<Array> dataset = args[0].As<Array>();
+  Local<Array> dataset = info[0].As<Array>();
   net->MakeTrainData(dataset, &traindata);
 
   if (traindata == NULL)
-    return NanThrowError("Internal error");
+    return Nan::ThrowError("Internal error");
 
 
   unsigned int max_neurons = 100000;
   unsigned int neurons_between_reports = 1000;
   float desired_error = 0.001;
   int scale = 0;
-  if (args.Length() >= 2) {
-    Local<Object> params = args[1].As<Object>();
-    if (params->Has(NanNew<String>("neurons"))) {
-      max_neurons = params->Get(NanNew<String>("neurons"))->IntegerValue();
+  if (info.Length() >= 2) {
+    Local<Object> params = info[1].As<Object>();
+    if (params->Has(Nan::New<String>("neurons").ToLocalChecked())) {
+      max_neurons = params->Get(Nan::New<String>("neurons").ToLocalChecked())->IntegerValue();
     }
-    if (params->Has(NanNew<String>("neurons_between_reports"))) {
-      neurons_between_reports = params->Get(NanNew<String>("neurons_between_reports"))->IntegerValue();
+    if (params->Has(Nan::New<String>("neurons_between_reports").ToLocalChecked())) {
+      neurons_between_reports = params->Get(Nan::New<String>("neurons_between_reports").ToLocalChecked())->IntegerValue();
     }
-    if (params->Has(NanNew<String>("error"))) {
-      desired_error = params->Get(NanNew<String>("error"))->NumberValue();
+    if (params->Has(Nan::New<String>("error").ToLocalChecked())) {
+      desired_error = params->Get(Nan::New<String>("error").ToLocalChecked())->NumberValue();
     }
-    if (params->Has(NanNew<String>("scale"))) {
-      scale = params->Get(NanNew<String>("scale"))->BooleanValue();
+    if (params->Has(Nan::New<String>("scale").ToLocalChecked())) {
+      scale = params->Get(Nan::New<String>("scale").ToLocalChecked())->BooleanValue();
     }
   }
   if (scale) {
@@ -53,6 +53,6 @@ NAN_METHOD(NNet::CascadeTrain)
   }
   net->CascadeTrainOnData(traindata, max_neurons, neurons_between_reports, desired_error);
   fann_destroy_train(traindata);
-  NanReturnUndefined();
+  return;
 }
 

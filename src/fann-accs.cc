@@ -8,38 +8,38 @@
 
 NAN_GETTER(NNet::GetTrainingAlgorithm)
 {
-  NanScope();
-  Local<Object> self = args.Holder();
-  NNet *net = ObjectWrap::Unwrap<NNet>(self);
+  Nan::HandleScope scope;
+  Local<Object> self = info.Holder();
+  NNet *net = Nan::ObjectWrap::Unwrap<NNet>(self);
   int size = sizeof(FANN_TRAIN_NAMES)/sizeof(char*);
   enum fann_train_enum algo = fann_get_training_algorithm(net->FANN);
 
   if (algo >= 0 && algo < size) {
-    NanReturnValue(NormalizeName(FANN_TRAIN_NAMES[algo], TRAIN_PREFIX, sizeof(TRAIN_PREFIX)-1));
+    info.GetReturnValue().Set(NormalizeName(FANN_TRAIN_NAMES[algo], TRAIN_PREFIX, sizeof(TRAIN_PREFIX)-1));
   } else {
-    NanReturnUndefined();
+    return;
   }
 }
 
 NAN_METHOD(NNet::GetNetworkType)
 {
-  NanScope();
-  NNet *net = ObjectWrap::Unwrap<NNet>(args.This());
+  Nan::HandleScope scope;
+  NNet *net = Nan::ObjectWrap::Unwrap<NNet>(info.This());
   int size = sizeof(FANN_NETTYPE_NAMES)/sizeof(char*);
   enum fann_nettype_enum ret = fann_get_network_type(net->FANN);
 
   if (ret >= 0 && ret < size) {
-    NanReturnValue(NormalizeName(FANN_NETTYPE_NAMES[ret], NETTYPE_PREFIX, sizeof(NETTYPE_PREFIX)-1));
+    info.GetReturnValue().Set(NormalizeName(FANN_NETTYPE_NAMES[ret], NETTYPE_PREFIX, sizeof(NETTYPE_PREFIX)-1));
   } else {
-    NanReturnUndefined();
+    return;
   }
 }
 
 NAN_SETTER(NNet::SetTrainingAlgorithm)
 {
-  NanScope();
-  Local<Object> self = args.Holder();
-  NNet *net = ObjectWrap::Unwrap<NNet>(self);
+  Nan::HandleScope scope;
+  Local<Object> self = info.Holder();
+  NNet *net = Nan::ObjectWrap::Unwrap<NNet>(self);
   int size = sizeof(FANN_TRAIN_NAMES)/sizeof(char*);
   int num = -1;
 
@@ -56,59 +56,59 @@ NAN_SETTER(NNet::SetTrainingAlgorithm)
 
 NAN_GETTER(NNet::GetLearningRate)
 {
-  NanScope();
-  Local<Object> self = args.Holder();
-  NNet *net = ObjectWrap::Unwrap<NNet>(self);
+  Nan::HandleScope scope;
+  Local<Object> self = info.Holder();
+  NNet *net = Nan::ObjectWrap::Unwrap<NNet>(self);
 
   float rate = fann_get_learning_rate(net->FANN);
-  NanReturnValue(NanNew<Number>(rate));
+  info.GetReturnValue().Set(Nan::New<Number>(rate));
 }
 
 NAN_GETTER(NNet::GetLearningMomentum)
 {
-  NanScope();
-  Local<Object> self = args.Holder();
-  NNet *net = ObjectWrap::Unwrap<NNet>(self);
+  Nan::HandleScope scope;
+  Local<Object> self = info.Holder();
+  NNet *net = Nan::ObjectWrap::Unwrap<NNet>(self);
 
   float momentum = fann_get_learning_momentum(net->FANN);
-  NanReturnValue(NanNew<Number>(momentum));
+  info.GetReturnValue().Set(Nan::New<Number>(momentum));
 }
 
 NAN_SETTER(NNet::SetLearningRate)
 {
-  NanScope();
-  Local<Object> self = args.Holder();
-  NNet *net = ObjectWrap::Unwrap<NNet>(self);
+  Nan::HandleScope scope;
+  Local<Object> self = info.Holder();
+  NNet *net = Nan::ObjectWrap::Unwrap<NNet>(self);
 
   fann_set_learning_rate(net->FANN, value->NumberValue());
 }
 
 NAN_SETTER(NNet::SetLearningMomentum)
 {
-  NanScope();
-  Local<Object> self = args.Holder();
-  NNet *net = ObjectWrap::Unwrap<NNet>(self);
+  Nan::HandleScope scope;
+  Local<Object> self = info.Holder();
+  NNet *net = Nan::ObjectWrap::Unwrap<NNet>(self);
 
   fann_set_learning_momentum(net->FANN, value->NumberValue());
 }
 
 NAN_METHOD(NNet::ActivationFunction)
 {
-  NanScope();
-  NNet *net = ObjectWrap::Unwrap<NNet>(args.This());
-  if (args.Length() < 2)
-    return NanThrowError("Usage: func = activation_function(layer, neuron) or activation_function(layer, neuron, newfunc)");
+  Nan::HandleScope scope;
+  NNet *net = Nan::ObjectWrap::Unwrap<NNet>(info.This());
+  if (info.Length() < 2)
+    return Nan::ThrowError("Usage: func = activation_function(layer, neuron) or activation_function(layer, neuron, newfunc)");
 
   int size = sizeof(FANN_ACTIVATIONFUNC_NAMES)/sizeof(char*);
-  int layer = args[0]->IntegerValue();
-  int neuron = args[1]->IntegerValue();
+  int layer = info[0]->IntegerValue();
+  int neuron = info[1]->IntegerValue();
 
-  if (args.Length() >= 3) {
+  if (info.Length() >= 3) {
     int num = -1;
-    if (args[2]->IsString()) {
-      num = _SeekCharArray(args[2].As<String>(), FANN_ACTIVATIONFUNC_NAMES, size, FANN_PREFIX);
-    } else if (args[2]->IsNumber()) {
-      num = args[2]->NumberValue();
+    if (info[2]->IsString()) {
+      num = _SeekCharArray(info[2].As<String>(), FANN_ACTIVATIONFUNC_NAMES, size, FANN_PREFIX);
+    } else if (info[2]->IsNumber()) {
+      num = info[2]->NumberValue();
     }
 
     if (num >= 0 && num < size) {
@@ -118,24 +118,24 @@ NAN_METHOD(NNet::ActivationFunction)
 
   enum fann_activationfunc_enum func = fann_get_activation_function(net->FANN, layer, neuron);
   if (func >= 0 && func < size) {
-    NanReturnValue(NormalizeName(FANN_ACTIVATIONFUNC_NAMES[func], FANN_PREFIX, sizeof(FANN_PREFIX)-1));
+    info.GetReturnValue().Set(NormalizeName(FANN_ACTIVATIONFUNC_NAMES[func], FANN_PREFIX, sizeof(FANN_PREFIX)-1));
   } else {
-    NanReturnUndefined();
+    return;
   }
 }
 
 NAN_METHOD(NNet::ActivationFunctionHidden)
 {
-  NanScope();
-  NNet *net = ObjectWrap::Unwrap<NNet>(args.This());
+  Nan::HandleScope scope;
+  NNet *net = Nan::ObjectWrap::Unwrap<NNet>(info.This());
   int size = sizeof(FANN_ACTIVATIONFUNC_NAMES)/sizeof(char*);
 
-  if (args.Length() >= 1) {
+  if (info.Length() >= 1) {
     int num = -1;
-    if (args[0]->IsString()) {
-      num = _SeekCharArray(args[0].As<String>(), FANN_ACTIVATIONFUNC_NAMES, size, FANN_PREFIX);
-    } else if (args[0]->IsNumber()) {
-      num = args[0]->NumberValue();
+    if (info[0]->IsString()) {
+      num = _SeekCharArray(info[0].As<String>(), FANN_ACTIVATIONFUNC_NAMES, size, FANN_PREFIX);
+    } else if (info[0]->IsNumber()) {
+      num = info[0]->NumberValue();
     }
 
     if (num >= 0 && num < size) {
@@ -145,24 +145,24 @@ NAN_METHOD(NNet::ActivationFunctionHidden)
 
   enum fann_activationfunc_enum func = fann_get_activation_function(net->FANN, 1, 0);
   if (func >= 0 && func < size) {
-    NanReturnValue(NormalizeName(FANN_ACTIVATIONFUNC_NAMES[func], FANN_PREFIX, sizeof(FANN_PREFIX)-1));
+    info.GetReturnValue().Set(NormalizeName(FANN_ACTIVATIONFUNC_NAMES[func], FANN_PREFIX, sizeof(FANN_PREFIX)-1));
   } else {
-    NanReturnUndefined();
+    return;
   }
 }
 
 NAN_METHOD(NNet::ActivationFunctionOutput)
 {
-  NanScope();
-  NNet *net = ObjectWrap::Unwrap<NNet>(args.This());
+  Nan::HandleScope scope;
+  NNet *net = Nan::ObjectWrap::Unwrap<NNet>(info.This());
   int size = sizeof(FANN_ACTIVATIONFUNC_NAMES)/sizeof(char*);
 
-  if (args.Length() >= 1) {
+  if (info.Length() >= 1) {
     int num = -1;
-    if (args[0]->IsString()) {
-      num = _SeekCharArray(args[0].As<String>(), FANN_ACTIVATIONFUNC_NAMES, size, FANN_PREFIX);
-    } else if (args[0]->IsNumber()) {
-      num = args[0]->NumberValue();
+    if (info[0]->IsString()) {
+      num = _SeekCharArray(info[0].As<String>(), FANN_ACTIVATIONFUNC_NAMES, size, FANN_PREFIX);
+    } else if (info[0]->IsNumber()) {
+      num = info[0]->NumberValue();
     }
 
     if (num >= 0 && num < size) {
@@ -172,88 +172,88 @@ NAN_METHOD(NNet::ActivationFunctionOutput)
 
   enum fann_activationfunc_enum func = fann_get_activation_function(net->FANN, fann_get_num_layers(net->FANN)-1, 0);
   if (func >= 0 && func < size) {
-    NanReturnValue(NormalizeName(FANN_ACTIVATIONFUNC_NAMES[func], FANN_PREFIX, sizeof(FANN_PREFIX)-1));
+    info.GetReturnValue().Set(NormalizeName(FANN_ACTIVATIONFUNC_NAMES[func], FANN_PREFIX, sizeof(FANN_PREFIX)-1));
   } else {
-    NanReturnUndefined();
+    return;
   }
 }
 
 NAN_METHOD(NNet::GetMse)
 {
-  NanScope();
-  NNet *net = ObjectWrap::Unwrap<NNet>(args.This());
+  Nan::HandleScope scope;
+  NNet *net = Nan::ObjectWrap::Unwrap<NNet>(info.This());
 
   float ret = fann_get_MSE(net->FANN);
-  NanReturnValue(NanNew<Number>(ret));
+  info.GetReturnValue().Set(Nan::New<Number>(ret));
 }
 
 NAN_METHOD(NNet::GetNumInput)
 {
-  NanScope();
-  NNet *net = ObjectWrap::Unwrap<NNet>(args.This());
+  Nan::HandleScope scope;
+  NNet *net = Nan::ObjectWrap::Unwrap<NNet>(info.This());
 
   unsigned int ret = fann_get_num_input(net->FANN);
-  NanReturnValue(NanNew<Integer>(ret));
+  info.GetReturnValue().Set(Nan::New<Integer>(ret));
 }
 
 NAN_METHOD(NNet::GetNumOutput)
 {
-  NanScope();
-  NNet *net = ObjectWrap::Unwrap<NNet>(args.This());
+  Nan::HandleScope scope;
+  NNet *net = Nan::ObjectWrap::Unwrap<NNet>(info.This());
 
   unsigned int ret = fann_get_num_output(net->FANN);
-  NanReturnValue(NanNew<Integer>(ret));
+  info.GetReturnValue().Set(Nan::New<Integer>(ret));
 }
 
 NAN_METHOD(NNet::GetTotalNeurons)
 {
-  NanScope();
-  NNet *net = ObjectWrap::Unwrap<NNet>(args.This());
+  Nan::HandleScope scope;
+  NNet *net = Nan::ObjectWrap::Unwrap<NNet>(info.This());
 
   unsigned int ret = fann_get_total_neurons(net->FANN);
-  NanReturnValue(NanNew<Integer>(ret));
+  info.GetReturnValue().Set(Nan::New<Integer>(ret));
 }
 
 NAN_METHOD(NNet::GetTotalConnections)
 {
-  NanScope();
-  NNet *net = ObjectWrap::Unwrap<NNet>(args.This());
+  Nan::HandleScope scope;
+  NNet *net = Nan::ObjectWrap::Unwrap<NNet>(info.This());
 
   unsigned int ret = fann_get_total_connections(net->FANN);
-  NanReturnValue(NanNew<Integer>(ret));
+  info.GetReturnValue().Set(Nan::New<Integer>(ret));
 }
 
 NAN_METHOD(NNet::GetConnectionRate)
 {
-  NanScope();
-  NNet *net = ObjectWrap::Unwrap<NNet>(args.This());
+  Nan::HandleScope scope;
+  NNet *net = Nan::ObjectWrap::Unwrap<NNet>(info.This());
 
   float ret = fann_get_connection_rate(net->FANN);
-  NanReturnValue(NanNew<Number>(ret));
+  info.GetReturnValue().Set(Nan::New<Number>(ret));
 }
 
 NAN_METHOD(NNet::GetNumLayers)
 {
-  NanScope();
-  NNet *net = ObjectWrap::Unwrap<NNet>(args.This());
+  Nan::HandleScope scope;
+  NNet *net = Nan::ObjectWrap::Unwrap<NNet>(info.This());
 
   unsigned int ret = fann_get_num_layers(net->FANN);
-  NanReturnValue(NanNew<Integer>(ret));
+  info.GetReturnValue().Set(Nan::New<Integer>(ret));
 }
 
 NAN_GETTER(NNet::GetLayerArray)
 {
-  NanScope();
-  Local<Object> self = args.Holder();
-  NNet *net = ObjectWrap::Unwrap<NNet>(self);
-  NanReturnValue(net->GetLayers());
+  Nan::HandleScope scope;
+  Local<Object> self = info.Holder();
+  NNet *net = Nan::ObjectWrap::Unwrap<NNet>(self);
+  info.GetReturnValue().Set(net->GetLayers());
 }
 
 NAN_METHOD(NNet::GetLayerArray)
 {
-  NanScope();
-  NNet *net = ObjectWrap::Unwrap<NNet>(args.This());
-  NanReturnValue(net->GetLayers());
+  Nan::HandleScope scope;
+  NNet *net = Nan::ObjectWrap::Unwrap<NNet>(info.This());
+  info.GetReturnValue().Set(net->GetLayers());
 }
 
 Local<Array> NNet::GetLayers()
@@ -262,9 +262,9 @@ Local<Array> NNet::GetLayers()
   unsigned int* layers = new unsigned int[size];
   fann_get_layer_array(FANN, layers);
 
-  Local<Array> result_arr = NanNew<Array>();
+  Local<Array> result_arr = Nan::New<Array>();
   for (int i=0; i<size; i++) {
-    result_arr->Set(i, NanNew<Number>(layers[i]));
+    result_arr->Set(i, Nan::New<Number>(layers[i]));
   }
 
   delete[] layers;
@@ -273,54 +273,54 @@ Local<Array> NNet::GetLayers()
 
 NAN_METHOD(NNet::GetBiasArray)
 {
-  NanScope();
-  NNet *net = ObjectWrap::Unwrap<NNet>(args.This());
+  Nan::HandleScope scope;
+  NNet *net = Nan::ObjectWrap::Unwrap<NNet>(info.This());
 
   int size = fann_get_num_layers(net->FANN);
   unsigned int* layers = new unsigned int[size];
   fann_get_bias_array(net->FANN, layers);
 
-  Local<Array> result_arr = NanNew<Array>();
+  Local<Array> result_arr = Nan::New<Array>();
   for (int i=0; i<size; i++) {
-    result_arr->Set(i, NanNew<Number>(layers[i]));
+    result_arr->Set(i, Nan::New<Number>(layers[i]));
   }
 
   delete[] layers;
-  NanReturnValue(result_arr);
+  info.GetReturnValue().Set(result_arr);
 }
 
 NAN_METHOD(NNet::GetWeights)
 {
-  NanScope();
-  NNet *net = ObjectWrap::Unwrap<NNet>(args.This());
+  Nan::HandleScope scope;
+  NNet *net = Nan::ObjectWrap::Unwrap<NNet>(info.This());
   int size = fann_get_total_connections(net->FANN);
   struct fann_connection *conns = new struct fann_connection[size];
   fann_get_connection_array(net->FANN, conns);
 
-  Local<Object> result_object = NanNew<Object>();
+  Local<Object> result_object = Nan::New<Object>();
   for (int i=0; i<size; i++) {
     Local<Object> obj;
     if (!result_object->Has(conns[i].from_neuron)) {
-      obj = NanNew<Object>();
+      obj = Nan::New<Object>();
       result_object->Set(conns[i].from_neuron, obj);
     } else {
       obj = result_object->Get(conns[i].from_neuron).As<Object>();
     }
-    obj->Set(conns[i].to_neuron, NanNew<Number>(conns[i].weight));
+    obj->Set(conns[i].to_neuron, Nan::New<Number>(conns[i].weight));
   }
 
   delete[] conns;
-  NanReturnValue(result_object);
+  info.GetReturnValue().Set(result_object);
 }
 
 NAN_METHOD(NNet::SetWeightsArr)
 {
-  NanScope();
-  NNet *net = ObjectWrap::Unwrap<NNet>(args.This());
+  Nan::HandleScope scope;
+  NNet *net = Nan::ObjectWrap::Unwrap<NNet>(info.This());
 
-  if (!args[0]->IsObject())
-    return NanThrowError("First argument should be object");
-  Local<Array> arg = args[0].As<Array>();
+  if (!info[0]->IsObject())
+    return Nan::ThrowError("First argument should be object");
+  Local<Array> arg = info[0].As<Array>();
   Local<Array> keys = arg->GetOwnPropertyNames();
 
   struct fann_connection *conns = new struct fann_connection[fann_get_total_connections(net->FANN)];
@@ -340,24 +340,24 @@ NAN_METHOD(NNet::SetWeightsArr)
   fann_set_weight_array(net->FANN, conns, counter);
 
   delete[] conns;
-  NanReturnUndefined();
+  return;
 }
 
 NAN_METHOD(NNet::SetWeights)
 {
-  NanScope();
-  if (args[0]->IsObject())
-    return SetWeightsArr(args);
+  Nan::HandleScope scope;
+  if (info[0]->IsObject())
+    return SetWeightsArr(info);
 
-  NNet *net = ObjectWrap::Unwrap<NNet>(args.This());
-  if (args.Length() < 3)
-    return NanThrowError("Usage: set_weights(new_object) or set_weight(from_neuron, to_neuron, weight)");
+  NNet *net = Nan::ObjectWrap::Unwrap<NNet>(info.This());
+  if (info.Length() < 3)
+    return Nan::ThrowError("Usage: set_weights(new_object) or set_weight(from_neuron, to_neuron, weight)");
 
-  unsigned int from_neuron = args[0]->IntegerValue();
-  unsigned int to_neuron = args[1]->IntegerValue();
-  fann_type weight = args[2]->NumberValue();
+  unsigned int from_neuron = info[0]->IntegerValue();
+  unsigned int to_neuron = info[1]->IntegerValue();
+  fann_type weight = info[2]->NumberValue();
 
   fann_set_weight(net->FANN, from_neuron, to_neuron, weight);
-  NanReturnUndefined();
+  return;
 }
 
