@@ -37,10 +37,12 @@
       'conditions': [
         [ 'OS!="win"', {
           'include_dirs': [
-            '/opt/local/include'
+            '/opt/local/include',
+            '/usr/local/include'
           ],
           'library_dirs': [
-            '/opt/local/lib'
+            '/opt/local/lib',
+            '/usr/local/lib'
           ]
         }],
       ],
